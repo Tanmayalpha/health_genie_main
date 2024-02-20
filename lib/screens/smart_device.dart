@@ -1,8 +1,11 @@
  import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:fluttertoast/fluttertoast.dart';
  import 'package:health_genie/helper/colors.dart';
+import 'package:health_genie/screens/Device_List.dart';
 import 'package:health_genie/utils/snackbar.dart';
 
 import 'DEVICE_sCREEN/connected_device_tile.dart';
@@ -72,7 +75,7 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
     // TODO: implement initState
     super.initState();
 
-    FlutterBluePlus.connectedSystemDevices.then((devices) {
+    /*FlutterBluePlus.connectedSystemDevices.then((devices) {
       _connectedDevices = devices;
       setState(() {});
     });
@@ -86,13 +89,13 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
     _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) {
       setState(() {});
     });
-
+*/
   }
 
  @override
  void dispose() {
-   _scanResultsSubscription.cancel();
-   _isScanningSubscription.cancel();
+  // _scanResultsSubscription.cancel();
+  // _isScanningSubscription.cancel();
    super.dispose();
  }
   @override
@@ -100,7 +103,7 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
     return ScaffoldMessenger(
        key: Snackbar.snackBarKeyB,
       child: Scaffold(
-        floatingActionButton: buildScanButton(context),
+       // floatingActionButton: buildScanButton(context),
         appBar: AppBar(
           title: const Text('Find Devices'),
         ),
@@ -110,7 +113,7 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
           child: SingleChildScrollView(
             child: Column(
               children: [
-                /*Container(
+                Container(
                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                    decoration: const BoxDecoration(
                      border: Border(             top: BorderSide(
@@ -137,11 +140,19 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
                        itemBuilder: (BuildContext context, int index) {
                          return InkWell(
                            onTap: () {
-                             if(FlutterBluePlus.isScanningNow){
+                             /*if(FlutterBluePlus.isScanningNow){
                                onStopPressed();
                              }else{
                                onScanPressed();
+                             }*/
+
+
+                             if('Weighing' == smartDeviceList[index]["firstName"]) {
+                               Navigator.push(context, MaterialPageRoute(builder: (context) => const DeviceListScreen(),));
+                             }else {
+                               Fluttertoast.showToast(msg: 'Device not available');
                              }
+
                            },
                            child: Card(
                              elevation: 2,
@@ -167,7 +178,7 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
                                          )),
                                    ),
                                    Container(
-                                     child: Text(                           smartDeviceList[index]["firstName"],
+                                     child: Text(   smartDeviceList[index]["firstName"],
                                        style: TextStyle(
                                          fontSize: 12,
                                        ),
@@ -185,9 +196,9 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
                                ),
                              ),
                            ),
-                         );             })       ),*/
-                ..._buildConnectedDeviceTiles(context),
-                ..._buildScanResultTiles(context),
+                         );             })       ),
+              //  ..._buildConnectedDeviceTiles(context),
+               // ..._buildScanResultTiles(context),
 
 
               ],
@@ -244,7 +255,7 @@ import 'DEVICE_sCREEN/scan_result_tile.dart';
        child: const Icon(Icons.stop),
      );
    } else {
-     return FloatingActionButton(child: const Text("SCAN"), onPressed: onScanPressed);
+     return FloatingActionButton(onPressed: onScanPressed, child: const Text("SCAN"));
    }
  }
 

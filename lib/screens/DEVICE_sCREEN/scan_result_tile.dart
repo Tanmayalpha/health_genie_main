@@ -177,12 +177,18 @@ class _ScanResultTileState extends State<ScanResultTile> {
 
     List temp = t[0].split(',');
 
-String kashf= temp[10];
+
+
+    String kashf= temp[10];
 
     int weightInInt = int.parse(kashf, radix: 16);
 
+
     List<int> byteValues = temp.map((hexString) => int.parse(hexString, radix: 16)).toList();
-    convertweight(byteValues);
+
+
+
+     convertweight(byteValues);
     _weighFromScale = weightInInt / 100;
   //  print('${ _weighFromScale}____________weight}') ;
 
@@ -257,11 +263,15 @@ String kashf= temp[10];
         _buildAdvRow(context, 'Complete Local Name', adv.localName),
         _buildAdvRow(context, 'Tx Power Level', '${adv.txPowerLevel ?? 'N/A'}'),
         _buildAdvRow(context, 'Manufacturer Data', getNiceManufacturerData(adv.manufacturerData)),
-        _buildAdvRow(context, 'Service UUIDs', getNiceServiceUuids(adv.serviceUuids)),
-        _buildAdvRow(context, 'Service Data', getNiceServiceData(adv.serviceData)),
+        //_buildAdvRow(context, 'Service UUIDs', getNiceServiceUuids(adv.serviceUuids)),
+        //_buildAdvRow(context, 'Service Data', getNiceServiceData(adv.serviceData)),
         _buildAdvRow(context, 'Connectable', adv.connectable.toString()),
         _buildAdvRow(context, 'Weight In Kg', _weighFromScale.toString()),
       ],
     );
   }
+
+
+
+
 }

@@ -78,7 +78,7 @@ flutter {
 }
 
 dependencies {
-    implementation files('libs/ailink.aar')
+    //implementation files('libs/ailink.aar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.3.1'
 }

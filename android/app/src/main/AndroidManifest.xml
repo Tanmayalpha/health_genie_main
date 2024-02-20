@@ -1,43 +1,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.health_genie">
-    <!--Compatible with mobile phone Ble above 6.0-->
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="30"
-        tools:targetApi="donut" />
 
 
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"
-        android:maxSdkVersion="30"
-        tools:targetApi="donut" />
-    <!--android12 needs to increase maxSdkVersion-->
     <uses-permission
         android:name="android.permission.BLUETOOTH"
-        android:maxSdkVersion="30"
-        tools:targetApi="donut" />
+        android:maxSdkVersion="30" />
     <uses-permission
         android:name="android.permission.BLUETOOTH_ADMIN"
-        android:maxSdkVersion="30"
-        tools:targetApi="donut" />
-    <!--Android12 also needs to add the following permissions, and also requires dynamic application-->
+        android:maxSdkVersion="30" />
+
+    <!-- required for API 23 - 30 -->
+    <uses-permission-sdk-23
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30" />
+    <uses-permission-sdk-23
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- API 31+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation"
-        tools:targetApi="s"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <!--Android10, 11 needs background scanning, you need to add the following permissions -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-feature
-        android:name="android.hardware.bluetooth_le"
-        android:required="false"
-         />
-    <uses-feature
-        android:name="android.hardware.bluetooth"
-        android:required="false"
-         />
+        tools:targetApi="s" />
+
+
+
     <application
         android:label="health_genie"
         android:name="${applicationName}"
@@ -69,6 +58,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <service android:name="com.pingwang.bluetoothlib.server.ELinkBleServer"/>
     </application>
 </manifest>
