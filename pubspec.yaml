@@ -45,7 +45,7 @@ dependencies:
   permission_handler: ^11.0.1
   flutter_bluetooth_serial: ^0.3.2
   scoped_model: ^2.0.0
-  ailink: ^0.0.2
+  ailink: ^0.0.4
   fluttertoast: ^8.2.4
 
 

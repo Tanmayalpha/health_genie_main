@@ -670,7 +670,7 @@ int? dataindex;
                                     weightData.isAdcError == true*/
                                     ? Container()
                                     : FutureBuilder(
-                                  future: _ailinkPlugin.getBodyFatData(ParamBodyFatData(double.parse(weightData.weightStr), weightData.adc, 1, 34, 170, weightData.algorithmId).toJson()),
+                                  future: _ailinkPlugin.getBodyFatData(ParamBodyFatData(double.parse(weightData.weightStr), weightData.adc, 1, 24, 164, weightData.algorithmId).toJson()),
                                   builder: (context, snapshot) {
                                   /*  print(
                                         '${weightData.status}____________');*/
@@ -680,11 +680,11 @@ int? dataindex;
                                         var item = BodyFatData.fromJson(
                                             json.decode(snapshot.data!));
                                         double bodyMass = 0.0;
-                                        int standardWeight = 170-100;
+                                        int standardWeight = 164-107;
                                         double weightControl =  double.parse(weightData.weightStr)- standardWeight;
                                         double fatMass = double.parse('${weightData.weightStr}') * (item.bfr ??0.0)/100;
                                         double leanBodyMass = double.parse(weightData.weightStr) - fatMass;
-                                        double muscleMass = leanBodyMass -fatMass;
+                                        double muscleMass = leanBodyMass * ((item.rom ?? 0.0)/100);
                                         double proteinAmount = leanBodyMass * ((item.pp ?? 0.0)/100);
 
 
@@ -727,7 +727,7 @@ int? dataindex;
                                                 bodyData('${item.uvi}','Visceral Fat Index' ),
                                                 Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${item.sfr}%','Subcutaneous Fat' ),
+                                                  bodyData('${item.sfr}%','Subcutaneous Fat' ),
                                                 Container(height: 40,width: 2,color: Colors.black26,),
 
                                                 bodyData('${standardWeight} ${weightData.weightUnitStr}','Standard Weight' ),
