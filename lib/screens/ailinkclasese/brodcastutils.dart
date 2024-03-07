@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:ailink/model/weight_data.dart';
 import 'package:health_genie/screens/ailinkclasese/weightdata.dart';
 
 class BroadcastScaleDataUtils {

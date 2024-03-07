@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:ailink/ailink.dart';
+import 'package:ailink/model/param_body_fat_data.dart';
 
-import 'package:ailink/ailink.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -712,6 +713,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data != null) {
                       final weightData = BroadcastScaleDataUtils().getWeightData(snapshot.data);
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

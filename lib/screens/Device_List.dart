@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:ailink/ailink.dart';
+import 'package:ailink/model/param_body_fat_data.dart';
+import 'package:ailink/utils/body_data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:health_genie/helper/colors.dart';
+import 'package:health_genie/screens/ailinkclasese/parambodyfat.dart';
 import 'package:health_genie/screens/home_page.dart';
 import 'package:health_genie/utils/snackbar.dart';
 
 import 'ailinkclasese/brodcastutils.dart';
 import 'ailinkclasese/fat_data.dart';
-import 'ailinkclasese/parambodyfat.dart';
 
 class DeviceListScreen extends StatefulWidget {
   const DeviceListScreen({Key? key}) : super(key: key);
@@ -652,6 +654,9 @@ int? dataindex;
                           if (snapshot.hasData && snapshot.data != null) {
                             final weightData = BroadcastScaleDataUtils().getWeightData(snapshot.data);
 
+                            print('${weightData?.algorithmId}______________algorithemId_');
+
+
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,101 +671,108 @@ int? dataindex;
                                 Text(
                                   'Temperature: ${weightData?.temp ?? ''}',
                                 ),
-                                weightData == null /*|| //Female=0;Male=1 //Gender: Male, Height: 170cm, Weight 65kg, Age 25
-                                    weightData.isAdcError == true*/
+                                weightData == null || weightData.isAdcError == true /* //Female=0;Male=1 //Gender: Male, Height: 170cm, Weight 65kg, Age 25*/
                                     ? Container()
                                     : FutureBuilder(
-                                  future: _ailinkPlugin.getBodyFatData(ParamBodyFatData(double.parse(weightData.weightStr), weightData.adc, 1, 24, 164, weightData.algorithmId).toJson()),
+                                  future: _ailinkPlugin.getBodyFatData(ParamBodyFatData(double.parse(weightData.weightStr), weightData.adc, 0, 30, 167, weightData.algorithmId).toJson()),
                                   builder: (context, snapshot) {
+                                    print('${weightData.status}_____status_________');
                                   /*  print(
                                         '${weightData.status}____________');*/
                                     if (weightData.status == 0xFF) {
                                       if (snapshot.hasData &&
                                           snapshot.data != null) {
+                                        print('______${snapshot.data}_____');
+
                                         var item = BodyFatData.fromJson(
                                             json.decode(snapshot.data!));
+                                       // final standardWeight = BodyDataUtils.getStandardWeight(1, 170);
                                         double bodyMass = 0.0;
-                                        int standardWeight = 164-107;
-                                        double weightControl =  double.parse(weightData.weightStr)- standardWeight;
-                                        double fatMass = double.parse('${weightData.weightStr}') * (item.bfr ??0.0)/100;
-                                        double leanBodyMass = double.parse(weightData.weightStr) - fatMass;
-                                        double muscleMass = leanBodyMass * ((item.rom ?? 0.0)/100);
-                                        double proteinAmount = leanBodyMass * ((item.pp ?? 0.0)/100);
+                                       // int standardWeight = ((item.bmi ?? 0.0) * ((170/100)*(170/100))).toInt();
+                                        //double weightControl =  double.parse(weightData.weightStr)- standardWeight;
+                                       // double fatMass = double.parse('${weightData.weightStr}') * (item.bfr ??0.0)/100;
+                                       // double leanBodyMass = double.parse(weightData.weightStr) - fatMass;
+                                       // double muscleMass = leanBodyMass * ((item.rom ?? 0.0)/100);
+                                       // double proteinAmount = leanBodyMass * ((item.pp ?? 0.0)/100);
+
+                                        final standardWeight = BodyDataUtils.getStandardWeight(0, 167);
+                                        final weightControl = BodyDataUtils.getWeightControl(double.parse(weightData.weightStr), 0, 167);
+                                        final fatMass = BodyDataUtils.getFatMass(double.parse(weightData.weightStr), item.bfr ?? 0.0);
+                                        final leanBodyMass = BodyDataUtils.getLeanBodyMass(double.parse(weightData.weightStr), item.bfr ?? 0.0);
+                                        final muscleMass = BodyDataUtils.getMuscleMass(double.parse(weightData.weightStr), item.rom ?? 0.0);
+                                        final proteinMass = BodyDataUtils.getProteinMass(double.parse(weightData.weightStr), item.pp ?? 0.0);
+                                        final level = BodyDataUtils.getObesityLevel(double.parse(weightData.weightStr), 0, 167);
 
 
 
-                                        return  Container(
+                                        return  Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                              bodyData('${weightData.weightStr ?? '0.0'} ${weightData.weightUnitStr ?? ''}','Body Weight' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData(item.bmi.toString(),'BMI' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${item.bfr.toString()}%','Body Fat Percentage' ),
+                                            ],),
+                                            const SizedBox(height: 20,),
+                                            Row(children: [
+                                              bodyData('${item.rom.toString()}%','Muscle Rate' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
+                                              bodyData('${item.vwc}%','Moisture' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                bodyData('${weightData.weightStr ?? '0.0'} ${weightData.weightUnitStr ?? ''}','Body Weight' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
-                                                bodyData(item.bmi.toString(),'BMI' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
-                                                bodyData('${item.bfr.toString()}%','Body Fat Percentage' ),
-                                              ],),
-                                              const SizedBox(height: 20,),
-                                              Row(children: [
-                                                bodyData('${item.rom.toString()}%','Muscle Rate' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${item.bm}kg','Born Mass' ),
+                                            ],),
+                                            const SizedBox(height: 20,),
+                                            Row(children: [
+                                              bodyData('${item.bmr}Kcal','BMR' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${item.vwc}%','Moisture' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${item.pp} %','Protein Rate' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${item.bm}kg','Born Mass' ),
-                                              ],),
-                                              const SizedBox(height: 20,),
-                                              Row(children: [
-                                                bodyData('${item.bmr}Kcal','BMR' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData(item.physicalAge.toString(),'Body Age' ),
+                                            ],),
+                                            const SizedBox(height: 20,),
+                                            Row(children: [
+                                              bodyData('${item.uvi}','Visceral Fat Index' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${item.pp} %','Protein Rate' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                                bodyData('${item.sfr}%','Subcutaneous Fat' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData(item.physicalAge.toString(),'Body Age' ),
-                                              ],),
-                                              const SizedBox(height: 20,),
-                                              Row(children: [
-                                                bodyData('${item.uvi}','Visceral Fat Index' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${standardWeight} ${weightData.weightUnitStr}','Standard Weight' ),
+                                            ],),
+                                            const SizedBox(height: 20,),
+                                            Row(children: [
+                                              bodyData('${weightControl} ${weightData.weightUnitStr}','Weight Control' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                  bodyData('${item.sfr}%','Subcutaneous Fat' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${fatMass} ${weightData.weightUnitStr}','Fat Mass' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${standardWeight} ${weightData.weightUnitStr}','Standard Weight' ),
-                                              ],),
-                                              const SizedBox(height: 20,),
-                                              Row(children: [
-                                                bodyData('${weightControl.toStringAsFixed(2)} ${weightData.weightUnitStr}','Weight Control' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                              bodyData('${leanBodyMass} ${weightData.weightUnitStr}','Lean Body Mass' ),
 
-                                                bodyData('${fatMass.toStringAsFixed(2)} ${weightData.weightUnitStr}','Fat Mass' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
+                                            ],),
+                                            const SizedBox(height: 20,),
+                                            Row(children: [
+                                              bodyData('${muscleMass}${weightData.weightUnitStr}','Muscle Mass' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                                bodyData('${leanBodyMass.toStringAsFixed(2)} ${weightData.weightUnitStr}','Lean Body Mass' ),
+                                              bodyData('${proteinMass} ${weightData.weightUnitStr}','Protein Amount' ),
+                                              Container(height: 40,width: 2,color: Colors.black26,),
 
-                                              ],),
-                                              const SizedBox(height: 20,),
-                                              Row(children: [
-                                                bodyData('${muscleMass.toStringAsFixed(2)}${weightData.weightUnitStr}','Muscle Mass' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
-
-                                                bodyData('${proteinAmount.toStringAsFixed(2)} ${weightData.weightUnitStr}','Protein Amount' ),
-                                                Container(height: 40,width: 2,color: Colors.black26,),
-
-                                                bodyData(getBMIStatus(item.bmi ?? 0.0),'Obesity Rating' ),
-                                              ],),
+                                              bodyData(level.name ?? '','Obesity Rating' ),
+                                            ],),
 
 
 
 
 
 
-                                            ],
-                                          ),
+                                          ],
                                         );
                                       }
                                     }
