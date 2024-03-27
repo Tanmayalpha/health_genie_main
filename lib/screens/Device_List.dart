@@ -654,7 +654,6 @@ int? dataindex;
                           if (snapshot.hasData && snapshot.data != null) {
                             final weightData = BroadcastScaleDataUtils().getWeightData(snapshot.data);
 
-                            print('${weightData?.algorithmId}______________algorithemId_');
 
 
                             return Column(
